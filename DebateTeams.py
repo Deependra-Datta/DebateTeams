@@ -45,11 +45,11 @@ def form_teams(participants, role):
     while len(combined_list) > 1:
         front = combined_list.iloc[0]
         back = combined_list.iloc[-1]
-        
+
         teams.append((
             front['First + Last Name'], front['Skill Level'], 
             back['First + Last Name'], back['Skill Level'],
-            role 
+            role  
         ))
         
         combined_list = combined_list.iloc[1:-1]
@@ -71,13 +71,15 @@ extra_spectators = spectator_count % group_count
 
 team_data = []
 spectator_index = 0
+judge_index = 0
 
 for group_num in range(group_count):
     current_group = []
 
-    if group_num < len(judge_teams):
-        judge_team = judge_teams[group_num]
+    if judge_index < len(judge_teams):
+        judge_team = judge_teams[judge_index]
         current_group.append([judge_team[0], judge_team[2], [judge_team[1], judge_team[3]], judge_team[4]])
+        judge_index += 1
     else:
         current_group.append([None, None, [None, None], 'Judge'])
 
@@ -97,7 +99,15 @@ for group_num in range(group_count):
             spectator_index += 1
 
     team_data.extend(current_group)
+    team_data.append([None, None, None, None]) 
+
+while judge_index < len(judge_teams):
+    current_group = []
+    judge_team = judge_teams[judge_index]
+    current_group.append([judge_team[0], judge_team[2], [judge_team[1], judge_team[3]], judge_team[4]])
+    team_data.extend(current_group)
     team_data.append([None, None, None, None])  
+    judge_index += 1
 
 team_df = pd.DataFrame(team_data, columns=['Participant 1', 'Participant 2', 'Skill Levels', 'Role'])
 
